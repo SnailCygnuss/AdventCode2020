@@ -1,4 +1,4 @@
-file_name = '1_input.txt'
+file_name = 'Day_1/1_input.txt'
 
 with open(file_name, 'r') as f:
     numbers = f.readlines()

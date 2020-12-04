@@ -1,6 +1,6 @@
 import re
 
-file_name = '2_input.txt'
+file_name = 'Day_2/2_input.txt'
 
 with open(file_name, 'r') as f:
     text_lines = f.readlines()

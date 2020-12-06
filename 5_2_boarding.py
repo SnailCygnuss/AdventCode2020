@@ -43,7 +43,6 @@ def find_missing_seat(seat_id_list):
 
 
 def main():
-    seat_matrix = np.zeros((128, 8), dtype='int')
     with open(file_name, 'r') as f:
         seat_ids = []
         for seat in f:

@@ -47,7 +47,6 @@ def main():
         seat_ids = []
         for seat in f:
             row, col = seat_position(seat.strip())
-            seat_matrix[row, col] = 1
             seat_ids.append(seat_id(row, col))
             # print(f'Row: {row} Col: {col} SeatID: {seat_id(row, col)}')
     print(find_missing_seat(seat_ids))

@@ -121,20 +121,12 @@ def main():
     with open(file_name, 'r') as f:
         joltage_list = f.readlines()
     joltage_list = list(map(int, joltage_list))
-    # print(joltage_list)
+    print('Part One')
     print(find_joltage_difference(joltage_list))
     print('Part Two')
-    # count_joltage_combinations(joltage_list)
-    print('='*10)
-    # print(recursive_find_next_combinations(12, joltage_list))
-    # print(recursive_find_next_combinations(11, joltage_list))
-    # print(recursive_find_next_combinations(10, joltage_list))
     adapter_combinations = recursive_find_next_combinations(0, joltage_list)
-    # print(adapter_combinations)
     print(count_dictionary_nesting(adapter_combinations))
-    #print(count_dict)
     print('Done')
-    # print(recursive_dict)
 
 
 if __name__ == '__main__':

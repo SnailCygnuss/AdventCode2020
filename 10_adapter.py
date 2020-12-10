@@ -43,23 +43,10 @@ def recursive_find_next_combinations(start, list_joltage):
             next_list[1]: recursive_find_next_combinations(next_list[1], list_joltage),
             next_list[2]: recursive_find_next_combinations(next_list[2], list_joltage)}
         return recursive_dict[start]
-    #    if next_list is None:
-    #        return dict()
-    #    for n in next_list:
-    #        recursive_dict[n] = recursive_find_next_combinations(n, list_joltage)
-    
-    # print(recursive_dict)
-    #return sum(list(map(recursive_find_next_combinations, next_list, itertools.repeat(list_joltage))))
-    # return recursive_dict
 
 
 count_dict = {}
 def count_dictionary_nesting(dictionary):
-    # print(list(dictionary.keys()))
-    # if isinstance(dictionary, dict):
-    #    print('Dict!!!')
-    # if dictionary in count_dict:
-    #    return count_dict[dictionary]
     if not isinstance(dictionary, dict):
         return 1
 

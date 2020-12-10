@@ -1,14 +1,4 @@
 import operator
-import functools
-import itertools
-
-
-def find_next_joltage_set(joltage_set, full_joltage_set):
-    min_next = min(joltage_set) + 1
-    max_next = max(joltage_set) + 3
-    next_joltage_set = set(range(min_next, max_next + 1))
-    next_joltage_set.intersection_update(full_joltage_set)
-    return next_joltage_set
 
 
 def find_next_joltages(joltage, full_joltage_set):
@@ -27,11 +17,9 @@ def recursive_find_next_combinations(start, list_joltage):
     if start in recursive_dict:
         return recursive_dict[start]
     elif start == max(complete_joltage_set):
-        # print('Found')
         return max(list_joltage) + 3
     else:
         next_list = find_next_joltages(first_set, complete_joltage_set)
-        # print(next_list)
         next_list_n = len(next_list)
         if next_list_n == 1:
             recursive_dict[start] = {next_list[0]: recursive_find_next_combinations(next_list[0], list_joltage)}

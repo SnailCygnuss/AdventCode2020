@@ -1,6 +1,5 @@
 import time
 import itertools
-import re
 import numpy as np
 
 DIRECTIONS_CL = itertools.cycle('NESW')
@@ -67,6 +66,7 @@ def count_directions(list_of_directions):
 
     return n_sum, e_sum
 
+
 def main1(input_dir):
     directions = remove_f_directions(input_dir)
     # Replace S with neg N and W with neg E
@@ -98,11 +98,8 @@ def main2(input_dir):
         elif word == 'E':
             waypoint_dir_1 = waypoint_dir_1 + qty
         elif word in ['L', 'R']:
-            # print(dir_1, dir_2)
             new_dir_1 = change_dir('E', direction)
             new_dir_2 = change_dir('N', direction)
-            # print(new_dir_1, new_dir_2)
-            # print(dir_1, dir_2)
             if new_dir_1 in ['N', 'S']:
                 dir_1 = new_dir_2
                 dir_2 = new_dir_1
@@ -113,11 +110,6 @@ def main2(input_dir):
             if dir_2 == 'S' or new_dir_2 == 'S':
                 dir_2 = 'N'
                 waypoint_dir_2 = -1 * waypoint_dir_2
-            # print(dir_1, dir_2)
-        # print(direction)
-        # print(waypoint_dir_1, waypoint_dir_2)
-        # print(ship_E, ship_N)
-        # input()
     print(np.abs(ship_E) + np.abs(ship_N))
 
 

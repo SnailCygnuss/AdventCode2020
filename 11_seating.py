@@ -1,8 +1,6 @@
-import pprint
 import itertools
 import numpy as np
 import time
-
 
 
 def occupy_seats(seat_layout):
@@ -32,9 +30,7 @@ def occupy_seats(seat_layout):
     seat_add = np.char.add(seat_1, seat_2)
     for seat in seat_set[2:]:
         seat_add = np.char.add(seat_add, seat)
-    # print(seat_add)
     seat_neighbour_occupied = np.char.count(seat_add, '#')
-    # print(seat_neighbour_occupied)
 
     new_layout = initial_layout.copy()
     # Intial seat empty and 0 neighbours
@@ -48,7 +44,6 @@ def occupy_seats(seat_layout):
     return new_layout
 
 def toggle_seat_layout(seat_layout, loop=1):
-    # print(f'Loop {loop}')
     loop = loop + 1
     new_layout = occupy_seats(seat_layout)
     if (new_layout == seat_layout).all():
@@ -58,7 +53,13 @@ def toggle_seat_layout(seat_layout, loop=1):
 
 
 def assign_neighbour(ele, x, y, seat_layout):
-    error_tuple = (0, 1) # == '.' in test data
+    # error_tuple = (0, 1) # == '.' in test data
+    # error_tuple = (0, 6) # == '.' in input data
+    # find a tuple which points to empty space i.e. '.'
+    for idy, ele in enumerate(seat_layout[0]):
+        if ele == '.':
+            error_tuple = (0, idy)
+            
     # Seat 1
     try:
         inc = 1
@@ -202,7 +203,6 @@ def find_neighbours_coords(seat_layout):
             seat_7y[idx, idy] = neighbours[6][1]
             seat_8x[idx, idy] = neighbours[7][0]
             seat_8y[idx, idy] = neighbours[7][1]
-    # print(seat_1x, seat_1y)
     seat_x = [seat_1x, seat_2x, seat_3x, seat_4x,
               seat_5x, seat_6x, seat_7x, seat_8x]
     seat_y = [seat_1y, seat_2y, seat_3y, seat_4y,
@@ -217,9 +217,6 @@ def find_neighbour_counts(seat_layout, coords_x, coords_y):
     for _ in range(8):
         seat.append(np.zeros(size, dtype='<U1'))
     
-    # print(seat[0][0, 0])
-    # seat[0][0, 0] = seat_layout[coords_x[0][0, 0], coords_y[0][0, 0]]
-    # print(seat[0][0, 0])
     for x, y in itertools.product(range(size[0]), range(size[1])):
         # print(x, y)
         seat[0][x, y] = seat_layout[coords_x[0][x, y], coords_y[0][x, y]]
@@ -231,14 +228,9 @@ def find_neighbour_counts(seat_layout, coords_x, coords_y):
         seat[6][x, y] = seat_layout[coords_x[6][x, y], coords_y[6][x, y]]
         seat[7][x, y] = seat_layout[coords_x[7][x, y], coords_y[7][x, y]]
 
-    # print(coords_x[0][0, 0], coords_y[0][0, 0])
-    # print(seat_layout[0, 1])
-    # print(seat[0])
     seat_combined = np.char.add(seat[0], seat[1])
     for n in seat[2:]:
         seat_combined = np.char.add(seat_combined, n)
-    # print()
-    # print(seat_combined)
     seat_occupied_count = np.char.count(seat_combined, '#')
     return seat_occupied_count
 
@@ -259,24 +251,17 @@ def replace_seats(seat_layout, seat_occupied_count):
 
 def find_neighbours_2(seat_layout, neighbor_coords=None):
     # Find coords of neighbours
-    # start = time.time()
     if neighbor_coords is None:
         neighbor_coords_x, neighbor_coords_y = find_neighbours_coords(seat_layout)
     else:
         neighbor_coords_x = neighbor_coords[0]
         neighbor_coords_y = neighbor_coords[1]
-    # print(f'Finished neighbour coords in {time.time() - start}')
 
     # Find count of neighbors as per coordinates
-    # start = time.time()
     neighbour_counts = find_neighbour_counts(seat_layout, neighbor_coords_x, neighbor_coords_y)
-    # print(f'Finished neighbour counts in {time.time() - start}')
-    # Find count of neighbours
 
     # Replace seats as per rules
-    # start = time.time()
     changed_seat_layout = replace_seats(seat_layout, neighbour_counts)
-    # print(f'Finished changing seat in {time.time() - start}')
     return changed_seat_layout
     
 
@@ -288,17 +273,11 @@ def main():
 
     seating_layout = [list(x) for x in seating_layout]
     seating_layout = np.array(seating_layout)
-    # n_rows, n_cols = seating_layout.shape
-    # # Add dummy rows and columns at four sides
-    # seating_layout = np.insert(seating_layout, 0, '.', axis=1)
-    # seating_layout = np.append(seating_layout, seating_layout[:, 0].reshape(-1, 1), axis=1)
-    # seating_layout = np.insert(seating_layout, 0, '.', axis=0)
-    # seating_layout = np.append(seating_layout, seating_layout[0, :].reshape(1, -1), axis=0)
-    # print(seating_layout)
     
     # Part One
-    #new_seating_layout = toggle_seat_layout(seating_layout)
-    #print((new_seating_layout == '#').sum())
+    new_seating_layout = toggle_seat_layout(seating_layout)
+    print('Part One')
+    print((new_seating_layout == '#').sum())
 
     # Part Two
     neighbour_coords = find_neighbours_coords(seating_layout)
@@ -307,8 +286,8 @@ def main():
     while not (new_layout == new_layout2).all():
         new_layout = new_layout2
         new_layout2 = find_neighbours_2(new_layout, neighbor_coords=neighbour_coords)
+    print('Part Two')
     print((new_layout2 == '#').sum())
-    # print(new_layout)
 
 
 if __name__ == '__main__':

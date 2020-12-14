@@ -119,7 +119,7 @@ def main3(bus_numbers):
     bi = list(map((lambda x, y: x - (y % x)), bus_numbers, delays))
     bi[0] = 0
     N = reduce(operator.mul, bus_numbers)
-    Ni = list(map(operator.truediv, itertools.repeat(N), bus_numbers))
+    Ni = list(map(operator.floordiv, itertools.repeat(N), bus_numbers))
     xi = list(map(solve_congruence, Ni, bus_numbers))
     biNi = list(map(operator.mul, bi, Ni))
     biNixi = list(map(operator.mul, biNi, xi))
@@ -158,7 +158,8 @@ def test_cases_part_2(func=main2):
             [67,7,59,61],
             [67,'x',7,59,61],
             [67,7,'x',59,61],
-            [1789,37,47,1889]]
+            [1789,37,47,1889],
+            [11,'x','x','x','x','x',13,'x','x',7]]
     
     for t in test:
         func(t)
@@ -166,7 +167,7 @@ def test_cases_part_2(func=main2):
 
 def read_file():
     file_name = 'Day_13/13_test.txt'
-    # file_name = 'Day_13/13_input.txt'
+    file_name = 'Day_13/13_input.txt'
     with open(file_name, 'r') as f:
         txt_contents = f.readlines()
 
@@ -185,17 +186,17 @@ if __name__ == '__main__':
     # Brute Force - Not working on input data
     # start2 = time.time()
     # main2(available_bus_ids)
-    # test_cases_part_2()
+    test_cases_part_2()
     # print(f'Finished Part 2 in {time.time() - start2}')
 
     # CRT - not working on input data
-    # start3 = time.time()
-    # main3(available_bus_ids)
-    # test_cases_part_2(func=main3)
-    # print(f'Finished Part 3 in {time.time() - start3}')
+    start3 = time.time()
+    main3(available_bus_ids)
+    test_cases_part_2(func=main3)
+    print(f'Finished Part 3 in {time.time() - start3}')
 
     # Efficient search
     start4 = time.time()
     main4(available_bus_ids)
-    # test_cases_part_2(func=main4)
+    test_cases_part_2(func=main4)
     print(f'Finished Part 4 in {time.time() - start4}')

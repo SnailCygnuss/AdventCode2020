@@ -96,8 +96,81 @@ def main(file_name='Day_17/17_input.txt'):
     print(new_array.sum())
 
 
+def get_sorrounding_elems(input_dim):
+    x = (input_dim[0][0] - 1, input_dim[0][1] + 1)
+    y = (input_dim[1][0] - 1, input_dim[1][1] + 1)
+    z = (input_dim[2][0] - 1, input_dim[2][1] + 1)
+    return [x, y, z]
+
+
+def get_neighbour_sum(coords, active_states):
+    neighbour_sum = 0
+    for a, b, c in itertools.product([-1, 0, 1], repeat=3):
+        if a == b == c == 0:
+            continue
+        x = coords[0] - a
+        y = coords[1] - b
+        z = coords[2] - c
+        if (x, y, z) in active_states:
+            # print(x, y, z)
+            neighbour_sum = neighbour_sum + 1
+    # print(coords)
+    # print(neighbour_sum)
+    # input()
+    return neighbour_sum
+
+
+def print_cubes(dims, active_states):
+    for z in range(dims[2][0], dims[2][1]):
+        print(f'z = {z}') 
+        for y in range(dims[1][0], dims[1][1]):
+            for x in range(dims[0][0], dims[0][1]):
+                if (x, y, z) in active_states:
+                    print('#', end='')
+                else:
+                    print('.', end='')
+            print()
+        print()
+        
+
+def main2(file_name='Day_17/17_input.txt'):
+    with open(file_name, 'r') as f:
+        input_slice = list(map(str.strip, f.readlines()))
+    input_dim = len(input_slice)
+
+    active_states = []
+    for x, y, z in itertools.product(range(input_dim), range(input_dim), 
+                                     range(1)):
+        if input_slice[y][x] == '#':
+            active_states.append((x, y, z))
+
+    # print(active_states)
+    dims = [(0, input_dim), (0, input_dim), (0, 1)]
+    
+    for _ in range(6):
+        new_active_states = []
+        dims = get_sorrounding_elems(dims)
+        # print(dims)
+        for x, y, z in itertools.product(range(dims[0][0], dims[0][1]),
+                                        range(dims[1][0], dims[1][1]),
+                                        range(dims[2][0], dims[2][1])):
+            n_sum = get_neighbour_sum((x, y, z), active_states)
+            if (x, y, z) in active_states:
+                if (n_sum == 2) or (n_sum == 3):
+                    new_active_states.append((x, y, z))
+            else:
+                if n_sum == 3:
+                    new_active_states.append((x, y, z))
+        active_states = new_active_states.copy()
+
+    # print_cubes(dims, new_active_states)
+    print(len(new_active_states))
+
+
 if __name__ == '__main__':
     start1 = time.time()
     # main(file_name='Day_17/17_test.txt')
-    main()
+    # main()
+    # main2(file_name='Day_17/17_test.txt')
+    main2()
     print(f'Part One completed in {time.time() - start1}')

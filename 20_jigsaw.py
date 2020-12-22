@@ -68,10 +68,6 @@ class ImageData:
             rtr_str = ''
         else:
             rtr_str = self.image_data[line][1:-1]
-        # if self.border_removed is None:
-        #     self.border_removed = self.image_data[1:-1]
-        #     for idx, _ in enumerate(self.border_removed):
-        #         self.border_removed[idx] = self.border_removed[idx][1:-1]
         return rtr_str
 
 
@@ -99,62 +95,7 @@ def find_corners(match_data, image_num_list):
     
     return corner_tiles
 
-
-def flip_images(match_data, image_data_list, image_num_list):
-    # Turn images to correct order
-    new_image_data_list = image_data_list.copy()
-
-    def find_edges_to_flip(match_data):
-        images_to_flip = []
-        for match in match_data:
-            for image_num, edge_num in match.items():
-                if edge_num > 3:
-                    images_to_flip.append((image_num, edge_num))
-        return images_to_flip
-
-
-    def flip_edges(images_to_flip, image_data_list):
-        for image_num, edge in images_to_flip:
-            idx = image_num_list.index(image_num)
-            image_data_list[idx].flip_edge(edge)
-        return image_data_list
-
-    images_to_flip = find_edges_to_flip(match_data)
-    # print(match_data)
-    while len(images_to_flip) != 0:
-        image_data_list = flip_edges(images_to_flip, image_data_list)
-        match_data = search_matching_edges(image_data_list)
-        # print(match_data)
-        images_to_flip = find_edges_to_flip(match_data)
-
-    # print(images_to_flip)
-    return image_data_list
-
    
-def find_neighbour_tile(image_num, match_data, direction):
-    matched_pair = None
-    print(match_data)
-    print(image_num)
-    print(direction)
-    if direction == 3:
-        dirs = [3, 7]
-    elif direction == 1:
-        dirs = [1, 5]
-    for match in match_data:
-        try:
-            edge = match[image_num]
-            if edge in dirs:
-                matched_pair = match
-        except KeyError:
-            continue
-    if matched_pair is not None:
-        for other_edge, _ in matched_pair.items():
-            if other_edge != image_num:
-                return other_edge
-    else:
-        raise ValueError
-
-
 def print_canvas(canvas):
     for i in range(len(canvas)):
         for j in range(len(canvas)):
@@ -186,54 +127,12 @@ def make_canvas(canvas):
             canvas_str = ''    
             for j in range(len(canvas)):
                     canvas_str += canvas[i][j].remove_border(line=line)
-            # canvas_str += '\n'
             canvas_list.append(canvas_str)
-    #canvas_list_stripped = []
-    # for line_no, line in enumerate(canvas_list):
-    #     line[:9] + line[11:]
-
-    # canvas_str = canvas_str.strip()
-    # canvas_str = canvas_str.replace('\n\n\n', '\n')
     canvas_list = [x for x in canvas_list if x != '']
-    # for line in canvas_list:
-    #     print(line)
-    # print(canvas_list)
     return canvas_list
 
 def find_tile_location(match_data, image_num_list, image_data_list):
     tile_corners = {}
-    # for match in match_data:
-    #     if 2351 in match:
-    #         print(match)
-    #         input()
-    # for match in match_data:
-    #     if 1951 in match:
-    #         print(match)
-    #         input()# print(match_data)
-    # edges = [x for x in range(9)]
-    # for image_num in image_num_list:
-    #     image_edges = []
-    #     matching_edges = map(operator.contains, match_data,
-    #                          itertools.repeat(image_num))
-    #     for match in itertools.compress(match_data, matching_edges):
-    #         image_edges.append(match[image_num])
-    #     tile_corners[image_num] = image_edges
-    # print(tile_corners)
-    # for image_num, corners in tile_corners.items():
-    #     if len(corners) == 2 and 1 in corners:
-    #         corner_image = image_num
-    #         break
-
-    # canvas_size = int(len(image_num_list)**0.5)
-    # canvas = [[0 for _ in range(canvas_size)] for _ in range(canvas_size)]
-    # canvas[0][0] = corner_image
-    # # Fill left edge
-    # for i in range(canvas_size-1):
-    #     canvas[i+1][0] = find_neighbour_tile(canvas[i][0], match_data, 1)
-    # # Fill other tiles
-    # for i, j in itertools.product(range(canvas_size), range(canvas_size-1)):
-    #     canvas[i][j+1] = find_neighbour_tile(canvas[i][j], match_data, 3)
-
     for image_num in image_num_list:
         image_edges = []
         matching_edges = map(operator.contains, match_data,
@@ -241,7 +140,6 @@ def find_tile_location(match_data, image_num_list, image_data_list):
         for match in itertools.compress(match_data, matching_edges):
             image_edges.append(match[image_num])
         tile_corners[image_num] = image_edges
-    # print(tile_corners)
     # Find a corner piece
     for image_num, corners in tile_corners.items():
         if len(corners) == 2:
@@ -308,18 +206,12 @@ def find_tile_location(match_data, image_num_list, image_data_list):
             canvas[1][0] = img_data
             idx = image_num_list.index(canvas[1][0].image_no)
             mask[idx] = 0
-    # print_canvas(canvas)
 
     # Fill left edge
     for i in range(1, canvas_size-1):
         bot_line = canvas[i][0].image_data[-1]
-        # print(bot_line)
-        # input()
         outer_break = 0
         for img_data in itertools.compress(image_data_list, mask):
-            # print(img_data.image_no)
-            # print(img_data.edges)
-            # input()
             for idx, edge in enumerate(img_data.edges):
                 if bot_line == edge:                        
                     if idx == 1:                            
@@ -348,20 +240,14 @@ def find_tile_location(match_data, image_num_list, image_data_list):
                     break
             if outer_break:
                 break
-        # canvas[i+1][0] = find_neighbour_tile(canvas[i][0], match_data, 1)
 
     # Fill other tiles
     for i, j in itertools.product(range(canvas_size), range(canvas_size-1)):
         rgt_edge = canvas[i][j].edges[3]
-        # print(rgt_edge)
-        # input()
         outer_break = 0
         for img_data in itertools.compress(image_data_list, mask):
                 
             for idx, edge in enumerate(img_data.edges):                    
-                # if img_data.image_no == 3719:
-                    # print(edge)
-                    # input()
                 if rgt_edge == edge:
                     if idx == 0:
                         img_data.rotate_edge_ccw()
@@ -460,9 +346,7 @@ def find_monster(canvas_list):
                 search_grid = can[i][x:20+x] + '\n' \
                         + can[i+1][x:20+x] + '\n' \
                         + can[i+2][x:20+x]
-                # print(repr(search_grid))
                 if re.match(monster_pat, search_grid):
-                    # print('Found')
                     loc_i.append(i)
                     loc_x.append(x)
                     break_canvas = 1
@@ -470,17 +354,13 @@ def find_monster(canvas_list):
         if break_canvas:
             break            
             
-    # monster_can_replaced = monster_can.copy()
-    # print('Shape: ', len(monster_can_replaced), len(monster_can_replaced[0]))
     new_can = None
     for i, x in zip(loc_i, loc_x):            
-        # print(i, x)
         new_can = monster_can[:i].copy()
         search_grid = monster_can[i][x:20+x] + '\n' \
                       + monster_can[i+1][x:20+x] + '\n' \
                       + monster_can[i+2][x:20+x]
         monster_string = re.sub(monster_pat, repl_pat, search_grid)
-        # print(monster_string)
         monster_string_list = monster_string.split('\n')
         first_line = monster_can[i][:x] + monster_string_list[0] \
                      + monster_can[i][x+20:]
@@ -493,40 +373,12 @@ def find_monster(canvas_list):
         new_can.append(second_line)
         new_can.append(third_line)
         new_can.extend(monster_can[i+3:])
-        # for line in new_can:
-        #     print(line)
         monster_can = new_can.copy()
-        # print('Shape: ', len(monster_can), len(monster_can[0]))
 
-    # for i in range(len(monster_can) - 2):
-    #     for x in range(len(monster_can) - 19):
-    #         search_grid = monster_can[i][x:20+x] + '\n' \
-    #                     + monster_can[i+1][x:20+x] + '\n' \
-    #                     + monster_can[i+2][x:20+x]
-    #         
-    #         monster_string += re.sub(monster_pat, repl_pat, search_grid)
-
-    # print(monster_can)
     hash_count = 0 
     for line in monster_can:
         hash_count += line.count('#')
-        # print(line)
     print('No of # in replaced image: ', hash_count)
-
-
-def image_class_test(images_list):
-    # Function to check if image is stored correctly
-    image1 = images_list[3]
-    print(image1.image_no)
-    print(image1.top_edge)
-    print(image1.bot_edge)
-    print(image1.lft_edge)
-    print(image1.rgt_edge)
-    print()
-    print(image1.top_flp_edge)
-    print(image1.bot_flp_edge)
-    print(image1.lft_flp_edge)
-    print(image1.rgt_flp_edge)
 
 
 def main(file_name='Day_20/20_input.txt'):
@@ -543,11 +395,7 @@ def main(file_name='Day_20/20_input.txt'):
     corner_product = functools.reduce(operator.mul, corner_tiles)
     print('Corner Tile number product: ', corner_product)
 
-    # Flip individual tiles to right orientation
-    # print(images_list[8].image_data)
-    #images_list = flip_images(match_data, images_list, image_num_list)
-    # print(images_list[8].image_data)
-    # match_data = search_matching_edges(images_list)
+    
     canvas_list = find_tile_location(match_data, image_num_list, images_list)
     find_monster(canvas_list)
     return 

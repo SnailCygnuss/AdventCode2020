@@ -58,15 +58,43 @@ def main(inp_dat='156794823', moves=100, part=1):
     return cups_list
 
 
-def main2(inp_data='156794823', moves=10000000):
+def main2(inp_data='156794823', moves=10_000_000):
     inp_data = list(map(int, list(inp_data)))
     max_val = max(inp_data)
     for i in range(max_val+1, 1000001):
         inp_data.append(i)
-    final_state = main(inp_dat=inp_data, moves=moves, part=2)
-    idx_one = final_state.index(1)
-    num1 = final_state[idx_one+1]
-    num2 = final_state[idx_one+2]
+    
+    next_data = {}
+    for num, nxt in zip(inp_data, inp_data[1:]):
+        next_data[num] = nxt
+    # Assign the last num to first
+    next_data[inp_data[-1]] = inp_data[0]
+    
+    first = inp_data[0]
+    for _ in range(moves):
+        next1 = next_data[first]
+        next2 = next_data[next1]
+        next3 = next_data[next2]
+        next4 = next_data[next3]
+        insert_idx = first - 1
+        while True:
+            if insert_idx == 0:
+                insert_idx = 1000000
+            if insert_idx not in [next1, next2, next3]:
+                break
+            else:
+                insert_idx = insert_idx - 1
+        # Insert Data
+        prev_next = next_data[insert_idx]
+        next_data[insert_idx] = next1
+        next_data[next3] = prev_next
+       # input()
+        # Get the next element
+        next_data[first] = next4
+        first = next4
+        
+    num1 = next_data[1]
+    num2 = next_data[num1]
     print(num1, num2)
     print(num1*num2)
 
@@ -77,22 +105,17 @@ def testcase():
 
 
 def testcase2():
-    # main2(inp_data='389125467', moves=10)
-    # main2(inp_data='389125467', moves=100)
-    # main2(inp_data='389125467', moves=1000)
-    # main2(inp_data='389125467', moves=10000)
-    # main2(inp_data='389125467', moves=100000)
     main2(inp_data='389125467', moves=1000000)
-    # main2(inp_data='389125467')
+    main2(inp_data='389125467')
 
 
 if __name__ == '__main__':
     start1 = time.time()
-    testcase()
-    main(part=1)
+    # testcase()
+    # main(part=1)
     print(f'Part One finished in {time.time()-start1}')
 
     start2 = time.time()
     # testcase2()
-    # main2()
+    main2()
     print(f'Part Two finished in {time.time()-start2}')
